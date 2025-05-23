@@ -27,19 +27,84 @@ class _ChatRoomState extends State<ChatRoom> {
       text: "Hey Mark !!",
       isMe: false,
       time: "8:12 AM",
+      messageType: MessageType.text
     ),
     ChatMessage(
       image: "assets/images/singapore.jpg",
       isMe: true,
       time: "9:55 AM",
       messageStatus: "read",
+      messageType: MessageType.image
     ),
     ChatMessage(
       isMe: false,
       time: "9:57 AM",
       audioLength: "0:26",
       audioPath: "assets/audio/audio1.mp3",
+      messageType: MessageType.audio
     ),
+    ChatMessage(
+      fileName: 'presentation.jpg',
+      fileSize: '2.5 MB',
+      fileExtension: 'jpg',
+      filePath: 'assets/files/presentation.jpg',
+      isMe: true,
+      time: '10:02 AM',
+      messageStatus: 'delivered',
+      messageType: MessageType.file,
+    ),
+    ChatMessage(
+      linkUrl: 'https://www.fonewalls.com/',
+      linkTitle: 'Amazing Website',
+      linkDescription: 'Check out this amazing website with lots of cool features and content.',
+      linkImage: 'https://www.fonewalls.com/wp-content/uploads/2160x3840-Background-HD-Wallpaper-502-768x1365.jpg',
+      isMe: false,
+      time: '10: 05 AM',
+      messageType: MessageType.link,
+    ),
+    ChatMessage(
+      locationInfo: LocationInfo(
+          latitude: 37.7749,
+          longitude: -122.4194,
+          address: 'San Francisco, CA, USA',
+          //name: 'You shared location',
+        ),
+      isMe: true,
+      time: '10:10 AM',
+      messageStatus: 'delivered',
+      messageType: MessageType.location,
+    ),
+    ChatMessage(
+      contactName: 'John Doe',
+      contactPhone: '+1234567890',
+      senderName: 'Sharone',
+      isMe: false,
+      time: '10:15 AM',
+      messageType: MessageType.contact,
+    ),
+    ChatMessage(
+      mediaFiles: [
+        'assets/uploads/images/photo1.jpg',
+        'assets/uploads/videos/video1.mp4',
+        'assets/uploads/images/photo2.jpg',
+        'assets/uploads/videos/video1.mp4',
+        'assets/uploads/images/photo3.jpg',
+      ],
+      downloadCount: 5,
+      isMe: true,
+      time: '10:20 AM',
+      messageStatus: 'read',
+      messageType: MessageType.multipleMedia,
+    ),
+    ChatMessage(
+      text: "Hello, how are you?",
+      isMe: false,
+      time: "10:25 AM",
+      videoPath: "assets/videos/video1.mp4",
+      videoThumbnail: "assets/images/singapore.jpg",
+      messageType: MessageType.video
+    ),
+
   ];
 
   void _addMessage(ChatMessage message) {

@@ -1,6 +1,12 @@
 import 'package:antmap_mvp/models/chat.dart';
 import 'package:antmap_mvp/utils/theme_config.dart';
 import 'package:antmap_mvp/widgets/chat/AudioWaveformBubble.dart';
+import 'package:antmap_mvp/widgets/chat/message/contact_message_bubble.dart';
+import 'package:antmap_mvp/widgets/chat/message/file_message_bubble.dart';
+import 'package:antmap_mvp/widgets/chat/message/link_message_bubble.dart';
+import 'package:antmap_mvp/widgets/chat/message/location_message_bubble.dart';
+import 'package:antmap_mvp/widgets/chat/message/multiple_media_bubble.dart';
+import 'package:antmap_mvp/widgets/chat/message/video_message_bubble.dart';
 import 'package:flutter/material.dart';
 
 class MessageItem extends StatelessWidget {
@@ -41,7 +47,7 @@ class MessageItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: message.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
             children: [
-                            // Afficher l'avatar de l'expéditeur si c'est un message reçu et qu'il s'agit d'un groupe
+              // Afficher l'avatar de l'expéditeur si c'est un message reçu et qu'il s'agit d'un groupe
               if (!message.isMe && isGroupChat)
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
@@ -55,13 +61,8 @@ class MessageItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: message.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                   children: [
-                    // Message content
-                    if (message.text != null)
-                      _buildTextMessage(message, isDarkMode)
-                    else if (message.image != null)
-                      _buildImageMessage(message, isDarkMode)
-                    else if (message.audioPath != null)
-                      _buildAudioMessage(message, isDarkMode),
+                    // Message content based on type
+                    _buildMessageContent(),
                     
                     // Timestamp
                     Padding(
@@ -109,6 +110,38 @@ class MessageItem extends StatelessWidget {
     );
   }
 
+  Widget _buildMessageContent() {
+    switch (message.messageType) {
+      case MessageType.text:
+        return _buildTextMessage();
+      
+      case MessageType.image:
+        return _buildImageMessage();
+      
+      case MessageType.video:
+        return _buildVideoMessage();
+      
+      case MessageType.audio:
+        return _buildAudioMessage();
+      
+      case MessageType.file:
+        return _buildFileMessage();
+      
+      case MessageType.link:
+        return _buildLinkMessage();
+      
+      case MessageType.contact:
+        return _buildContactMessage();
+      
+      case MessageType.location:
+        return _buildLocationMessage();
+      
+      case MessageType.multipleMedia:
+        return _buildMultipleMediaMessage();
+      
+      }
+  }
+
   Widget _buildStatusIcon(String status) {
     final Map<String, String> statusIcons = {
       'read': 'assets/icons/is_read.png',
@@ -127,15 +160,15 @@ class MessageItem extends StatelessWidget {
     );
   }
 
-  Widget _buildTextMessage(ChatMessage message, bool isDarkMode) {
+  Widget _buildTextMessage() {
     final colors = isDarkMode ? AppTheme.darkColors : AppTheme.lightColors;
     
     return Container(
       decoration: BoxDecoration(
-      color: message.isMe ? colors.senderBubbleBackground
-                              : colors.receiverBubbleBackground,
-      borderRadius: BorderRadius.circular(25.0),
-    ),
+        color: message.isMe ? colors.senderBubbleBackground
+                            : colors.receiverBubbleBackground,
+        borderRadius: BorderRadius.circular(25.0),
+      ),
       child: Container(
         padding: EdgeInsets.fromLTRB(
           message.isMe ? 15.0 : 20.0,  // Padding gauche plus grand pour les messages reçus
@@ -143,11 +176,11 @@ class MessageItem extends StatelessWidget {
           message.isMe ? 20.0 : 15.0,  // Padding droit plus grand pour les messages envoyés
           10.0,
         ),
-        constraints: BoxConstraints(
+        constraints: const BoxConstraints(
           maxWidth: 300, // Limite la largeur du message
         ),
         child: Text(
-          message.text!,
+          message.text ?? '',
           style: TextStyle(
             color: message.isMe ? colors.senderBubbleText : colors.receiverBubbleText,
             fontSize: 16.0,
@@ -156,13 +189,14 @@ class MessageItem extends StatelessWidget {
       ),
     );
   }
-  Widget _buildImageMessage(ChatMessage message, bool isDarkMode) {
-    final colors= isDarkMode ? AppTheme.darkColors : AppTheme.lightColors;
+
+  Widget _buildImageMessage() {
+    final colors = isDarkMode ? AppTheme.darkColors : AppTheme.lightColors;
     return Container(
       padding: const EdgeInsets.all(4.0),
       decoration: BoxDecoration(
         color: message.isMe ? colors.senderBubbleBackground
-                                : colors.receiverBubbleBackground,
+                            : colors.receiverBubbleBackground,
         borderRadius: BorderRadius.circular(15.0),
       ),
       child: ClipRRect(
@@ -177,7 +211,15 @@ class MessageItem extends StatelessWidget {
     );
   }
 
-  Widget _buildAudioMessage(ChatMessage message, bool isDarkMode) {
+  Widget _buildVideoMessage() {
+    return VideoMessageBubble(
+      videoPath: message.videoPath!,
+      isMe: message.isMe,
+      isDarkMode: isDarkMode,
+    );
+  }
+
+  Widget _buildAudioMessage() {
     return AudioMessageBubble(
       isMe: message.isMe,
       isDarkMode: isDarkMode,
@@ -185,5 +227,63 @@ class MessageItem extends StatelessWidget {
     );
   }
 
-  
+  Widget _buildFileMessage() {
+    return FileMessageBubble(
+      fileName: message.fileName ?? 'Unknown file',
+      fileSize: message.fileSize ?? '0 KB',
+      fileExtension: message.fileExtension ?? 'file',
+      isMe: message.isMe,
+      isDarkMode: isDarkMode,
+      onTap: () {
+        // Handle file tap (open, download, etc.)
+        print('File tapped: ${message.fileName}');
+      },
+    );
+  }
+
+  Widget _buildLinkMessage() {
+    return LinkMessageBubble(
+      url: message.linkUrl!,
+      title: message.linkTitle,
+      description: message.linkDescription,
+      imageUrl: message.linkImage,
+      isMe: message.isMe,
+      isDarkMode: isDarkMode,
+    );
+  }
+
+  Widget _buildContactMessage() {
+    return ContactMessageBubble(
+      contactName: message.contactName!,
+      contactPhone: message.contactPhone,
+      contactAvatar: message.contactAvatar,
+      contactUsername: message.senderUsername,
+      isMe: message.isMe,
+      isDarkMode: isDarkMode,
+      /*onTap: () {
+        // Handle contact tap (view details, add to contacts, etc.)
+        print('Contact tapped: ${message.contact!.name}');
+      },*/
+    );
+  }
+
+  Widget _buildLocationMessage() {
+    return LocationMessageBubble(
+      location: message.locationInfo!,
+      isMe: message.isMe,
+      isDarkMode: isDarkMode,
+    );
+  }
+
+  Widget _buildMultipleMediaMessage() {
+    return MultipleMediaBubble(
+      mediaFiles: message.mediaFiles!,
+      isMe: message.isMe,
+      isDarkMode: isDarkMode,
+      onMediaTap: (mediaPath) {
+        // Handle media tap (view full screen, download, etc.)
+        print('Media tapped: $mediaPath');
+      },
+    );
+  }
 }
