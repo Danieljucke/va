@@ -83,58 +83,55 @@ class _AudioMessageBubbleState extends State<AudioMessageBubble> {
         ? 0
         : _position.inMilliseconds / _duration.inMilliseconds;
 
-    return ClipPath(
-      //clipper: BubbleClipper(widget.isMe),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
-        decoration: BoxDecoration(
-        color: widget.isMe ? colors.senderBubbleBackground
-                                : colors.receiverBubbleBackground,
-        borderRadius: BorderRadius.circular(20.0),
-      ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            GestureDetector(
-              onTap: _togglePlayPause,
-              child: Icon(
-                _player.playing ? Icons.pause_circle_filled : Icons.play_circle_fill,
-                color: Colors.orange,
-                size: 30,
-              ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+      decoration: BoxDecoration(
+      color: widget.isMe ? colors.senderBubbleBackground
+                              : colors.receiverBubbleBackground,
+      borderRadius: BorderRadius.circular(25.0),
+    ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: _togglePlayPause,
+            child: Icon(
+              _player.playing ? Icons.pause_circle_filled : Icons.play_circle_fill,
+              color: Colors.orange,
+              size: 30,
             ),
-            const SizedBox(width: 10),
-            Container(
-              width: 150,
-              height: 30,
-              child: Row(
-                children: List.generate(30, (index) {
-                  final barPercent = index / 30;
-                  final isPlayed = barPercent <= playedPercent;
-                  return Container(
-                    width: 3,
-                    height: (index % 2 == 0) ? 15.0 : 8.0,
-                    margin: const EdgeInsets.symmetric(horizontal: 1),
-                    decoration: BoxDecoration(
-                      color: isPlayed
-                          ? Colors.orange
-                          : (widget.isMe ? Colors.white : const Color(0xFF708090)),
-                      borderRadius: BorderRadius.circular(1.5),
-                    ),
-                  );
-                }),
-              ),
+          ),
+          const SizedBox(width: 10),
+          SizedBox(
+            width: 150,
+            height: 30,
+            child: Row(
+              children: List.generate(30, (index) {
+                final barPercent = index / 30;
+                final isPlayed = barPercent <= playedPercent;
+                return Container(
+                  width: 3,
+                  height: (index % 2 == 0) ? 15.0 : 8.0,
+                  margin: const EdgeInsets.symmetric(horizontal: 1),
+                  decoration: BoxDecoration(
+                    color: isPlayed
+                        ? Colors.orange
+                        : (widget.isMe ? Colors.white : const Color(0xFF708090)),
+                    borderRadius: BorderRadius.circular(1.5),
+                  ),
+                );
+              }),
             ),
-            const SizedBox(width: 10),
-            Text(
-              _formatDuration(_duration - _position),
-              style: TextStyle(
-                color: widget.isMe ? Colors.white : Colors.black87,
-                fontSize: 14.0,
-              ),
+          ),
+          const SizedBox(width: 10),
+          Text(
+            _formatDuration(_duration - _position),
+            style: TextStyle(
+              color: widget.isMe ? Colors.white : Colors.black87,
+              fontSize: 14.0,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

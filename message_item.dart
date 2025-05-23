@@ -1,7 +1,6 @@
 import 'package:antmap_mvp/models/chat.dart';
 import 'package:antmap_mvp/utils/theme_config.dart';
 import 'package:antmap_mvp/widgets/chat/AudioWaveformBubble.dart';
-import 'package:antmap_mvp/widgets/chat/bubble_painters.dart';
 import 'package:flutter/material.dart';
 
 class MessageItem extends StatelessWidget {
@@ -36,7 +35,7 @@ class MessageItem extends StatelessWidget {
       child: Align(
         alignment: message.isMe ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 8.0),
+          margin: const EdgeInsets.symmetric(vertical: 3.0),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -69,7 +68,7 @@ class MessageItem extends StatelessWidget {
                       padding: EdgeInsets.only(
                         left: message.isMe ? 0 : 10,
                         right: message.isMe ? 10 : 0,
-                        top: 2,
+                        top: 9,
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -131,11 +130,12 @@ class MessageItem extends StatelessWidget {
   Widget _buildTextMessage(ChatMessage message, bool isDarkMode) {
     final colors = isDarkMode ? AppTheme.darkColors : AppTheme.lightColors;
     
-    return CustomPaint(
-      painter: BubblePainter(
-        color: message.isMe ? colors.senderBubbleBackground : colors.receiverBubbleBackground,
-        isMe: message.isMe,
-      ),
+    return Container(
+      decoration: BoxDecoration(
+      color: message.isMe ? colors.senderBubbleBackground
+                              : colors.receiverBubbleBackground,
+      borderRadius: BorderRadius.circular(25.0),
+    ),
       child: Container(
         padding: EdgeInsets.fromLTRB(
           message.isMe ? 15.0 : 20.0,  // Padding gauche plus grand pour les messages reçus
@@ -156,26 +156,22 @@ class MessageItem extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildImageMessage(ChatMessage message, bool isDarkMode) {
-    final colors = isDarkMode ? AppTheme.darkColors : AppTheme.lightColors;
-    return ClipPath(
-      clipper: BubbleClipper(message.isMe),
-      child: Container(
-        color: message.isMe
-             ? colors.senderBubbleBackground
-             : colors.receiverBubbleBackground,
-        padding: message.isMe 
-            ? EdgeInsets.only(top:5, bottom: 5, left: 5, right: 15) 
-            : EdgeInsets.only(top:5, bottom: 5, left: 15, right: 5),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(25),
-          child: Image.asset(
-            message.image!,
-            width: 200,
-            height: 150,
-            fit: BoxFit.cover,
-          ),
+    final colors= isDarkMode ? AppTheme.darkColors : AppTheme.lightColors;
+    return Container(
+      padding: const EdgeInsets.all(4.0),
+      decoration: BoxDecoration(
+        color: message.isMe ? colors.senderBubbleBackground
+                                : colors.receiverBubbleBackground,
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12.0),
+        child: Image.asset(
+          message.image!,
+          width: 200,
+          height: 150,
+          fit: BoxFit.cover,
         ),
       ),
     );
@@ -188,4 +184,6 @@ class MessageItem extends StatelessWidget {
       audioPath: message.audioPath!,
     );
   }
+
+  
 }
